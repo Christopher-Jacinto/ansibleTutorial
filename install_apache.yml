@@ -7,11 +7,19 @@
   - name: update repo index
     dnf:
       update_cache: yes
+    when: ansible_distribution == ["Debian","Ubuntu","RedHat"]
   
+  - name: install apache2 pacakge
+    apt:
+      name: httpd
+      state: latest
+    when: ansible_distribution == "Ubuntu"
+
   - name: install apache2 pacakge
     dnf:
       name: httpd
       state: latest
+    when: ansible_distribution == "RedHat"
 
   - name: add php support for apache
     dnf:
@@ -28,3 +36,4 @@
         - php-pdo
         - php-xml
         - php-zip 
+    when: ansible_distribution == "Ubuntu"
