@@ -1,0 +1,45 @@
+---
+
+- hosts: all
+  become: true
+  pre_tasks:
+
+  - name: install updates (RedHat5yy)
+    dnf:
+      update_only: yes
+      update_cache: yes
+    when: ansible_distribution == "RedHat"
+  
+  - name: install updates (Ubuntu)
+    apt:
+      update_only: yes
+      update_cache: yes
+    when: ansible_distribution == "Ubuntu"
+
+- hosts: web_servers
+  become: true
+  tasks:
+
+  - name: install apache and php
+    package:
+      name:
+        - "{{ apache_pkg }}"
+        - "{{ php_pkg }}"
+      state: latest
+      update_cache: yes
+
+- hosts: db_servers
+  become: true
+  tasks:
+
+  - name: install mariadb ini Redhat
+    dnf:
+      name: mariadb
+      state: latest
+    when: ansible_distribution == "RedHat"
+  
+  - name: install mariadb ini Ubuntu
+    dnf:
+      name: mariadb
+      state: latest
+    when: ansible_distribution == "Ubuntu"
