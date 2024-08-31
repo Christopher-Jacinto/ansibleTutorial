@@ -1,0 +1,39 @@
+---
+
+- hosts: all
+  become: true
+  tasks:
+
+  - name: update repo index
+    dnf:
+      update_cache: yes
+    when: ansible_distribution == ["Debian","Ubuntu","RedHat"]
+  
+  - name: install apache2 pacakge
+    apt:
+      name: httpd
+      state: latest
+    when: ansible_distribution == "Ubuntu"
+
+  - name: install apache2 pacakge
+    dnf:
+      name: httpd
+      state: latest
+    when: ansible_distribution == "RedHat"
+
+  - name: add php support for apache
+    dnf:
+      name: 
+        - php
+        - php-cli
+        - php-common
+        - php-gd
+        - php-json
+        - php-intl
+        - php-mbstring
+        - php-mysqli
+        - php-openssl
+        - php-pdo
+        - php-xml
+        - php-zip 
+    when: ansible_distribution == "Ubuntu"
