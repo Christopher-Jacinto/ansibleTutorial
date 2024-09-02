@@ -1,3 +1,6 @@
+[workstations]
+localhost
+
 [web_servers]
 172.24.0.10 apache_pkg=httpd php_pkg=php
 
