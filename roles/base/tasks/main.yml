@@ -1,0 +1,6 @@
+- name: add ssh key for chrisjac
+  tags: always
+  ansible.posix.authorized_key:
+    user: chrisjac
+    state: present
+    key: "{{ lookup('file', '/home/serviceAcct/.ssh/ansible.pub') }}"

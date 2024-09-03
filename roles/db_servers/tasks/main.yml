@@ -1,0 +1,12 @@
+- name: install mariadb ini Redhat
+  dnf:
+    name: mariadb
+    state: latest
+  when: ansible_distribution == "RedHat"
+
+- name: install mariadb ini Ubuntu
+  dnf:
+    name: mariadb
+    state: latest
+  when: ansible_distribution == "Ubuntu"
+

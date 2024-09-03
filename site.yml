@@ -16,94 +16,30 @@
       update_cache: yes
     when: ansible_distribution == "Ubuntu"
 
+- hosts: all
+  become: true
+  roles:
+    - base
+
+- hosts: workstations
+  become: true
+  roles:
+    - workstations
+
+
 - hosts: web_servers
   become: true
-  tasks:
+  roles:
+    - web_servers
 
-  - name: install apache and php
-    package:
-      name:
-        - "{{ apache_pkg }}"
-        - "{{ php_pkg }}"
-      state: latest
-      update_cache: yes
-
-  - name: copy default html file for site
-    tags: apache, apache2, httpd
-    copy:
-      src: default_site.html
-      dest: /var/www/html/index.html
-      owner: root
-      group: root
-      mode: 0644
-
-  - name: start httpd(RedHat)
-    tags: apache,redhat,httpd
-    service:
-      name: httpd
-      state: started
-      enabled: yes
-    when: ansible_distribution == "RedHat"
-
-  - name: change email address in httpd.conf file
-    tags: apache,apache2,httpd
-    lineinfile:
-      path: /etc/httpd/conf/httpd.conf
-      regexp: '^ServerAdmin'
-      line: ServerAdmin chrisj@soltek.com
-    when: ansible_distribution == "RedHat"
-    register: httpd
-
-
-  - name: restart httpd after changes made to httpd.conf
-    tags: apache,apache2,httpd
-    service:
-      name: httpd
-      state: restarted
-    when: httpd.changed
 
 - hosts: db_servers
   become: true
-  tasks:
+  roles:
+    - db_servers
 
-  - name: install mariadb ini Redhat
-    dnf:
-      name: mariadb
-      state: latest
-    when: ansible_distribution == "RedHat"
-  
-  - name: install mariadb ini Ubuntu
-    dnf:
-      name: mariadb
-      state: latest
-    when: ansible_distribution == "Ubuntu"
 
-- hosts: all
+- hosts: file_servers
   become: true
-  tasks:
-  
-  - name: add ssh key for chrisjac
-    tags: always
-    ansible.posix.authorized_key:
-      user: chrisjac
-      state: present
-      key: "{{ lookup('file', '/home/serviceAcct/.ssh/ansible.pub') }}"
-
-
-- hosts: workstations
-  connection: local
-  become: true
-  tasks:
-  
-  - name: install unzip
-    package:
-      name: unzip
-
-  - name: install terraform
-    unarchive:
-      src: https://releases.hashicorp.com/terraform/1.9.5/terraform_1.9.5_linux_amd64.zip
-      dest: /usr/local/bin
-      remote_src: yes
-      mode: 0755
-      owner: root
-      group: root
+  roles:
+    - file_servers
